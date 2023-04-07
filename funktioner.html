@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Min sida med funktioner</title>
+    <style>
+      .function {
+        flex-grow: 1;
+        flex-shrink: 0;
+        border: 1px solid black;
+        margin: 10px;
+      }
+      .function h2 {
+        margin-top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="display: flex; flex-direction: row;">
+      <div style="display: flex; flex-direction: column; flex-grow: 1;">
+        <h1>Avgånger tunnelbana</h1>
+            <div id="departures" class="function" ></div>
+            <script language = "javascript">
+            //Funktionen hämtar realtidsavgångar från SL api
+            function getDeparures() {
+                const departyrediv = document.getElementById("departures");
+                const url = "https://cors-anywhere.herokuapp.com/https://api.sl.se/api2/realtimedeparturesV4.json?key=d17c80dc5ad947d9a35f4a1618d8d9a6&timewindow=20&siteid=9704";
+                fetch(url)
+                .then((resp) => resp.json())
+                .then(function(data){
+                    console.log(data); 
+                    let departurs = data.ResponseData.Trains.concat(data.ResponseData.Buses); //
+                    
+                    departyrediv.innerHTML = "";
+        
+                    return departurs.map(function(departure){
+                        //if(departure.JourneyDirection == 2);
+                        // filtrerar avgångar mot nor
+                        let north = departurs.filter(function(value){
+                            return value.JourneyDirection == 2;
+                        });
+                        let divtag = document.createElement("div");
+        
+                        divtag.innerHTML = `${
+                            departure.LineNumber +
+                            " " +
+                            departure.Destination +
+                            " " +
+                            departure.DisplayTime
+                        }`;
+                        departyrediv.appendChild(divtag);
+                    });
+                })
+                .catch(function(error) {console.log(error)});
+            }
+        
+            function UpdateDepartures(){
+                getDeparures();
+                // funktionen körs varje 10e sekunde.
+                setInterval(getDeparures, 10000);
+        
+            }
+        
+            UpdateDepartures();
+            </script>
+        </div>
+        <div class="numberOfEmployees" class="function">
+            <h1> Number of employees in the bulding</h1>
+            <div id = "numberOfEmployees"></div>
+            <input  type="text" id = "rfID"/>
+            <button onClick = "addPerson()">Check in</button>
+            <button onClick="removePerson()">Check out</button>
+            <script language = "javascript">
+                const url = "https://6422add477e7062b3e1fa5e3.mockapi.io/people"
+                function loadData(){
+                    const numberofEmployeesDiv = document.getElementById("numberOfEmployees");
+                    const numberOfEmployees = fetch(url)
+                    .then((resp) => resp.json())
+                    .then(function(data){
+                        console.log(data.length)
+                        let NumberOfPeople = data.length;
+                        numberofEmployeesDiv.innerHTML = NumberOfPeople;
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                        
+                    });
+                }
+                loadData();
+                function addPerson(){
+                    const  rfID = document.getElementById("rfID").value;
+                    console.log("rfID",rfID)
+                    var data = {rfID: rfID};
+                    fetch(url, {
+                        method : "post",
+                        body: JSON.stringify(data),
+                })
+                    .then((resp) => resp.json())
+                    .then(function(data) {
+                        console.log(data);
+                        loadData();
+                        alert("Welcome to the office!");
+                    })
+                    .catch(function(error){
+                        console.log(error);       
+                    });
+                }
+                
+                //function 
+                function removePerson(){
+                    const  rfID = document.getElementById("rfID").value;
+                    console.log("rfID",rfID)
+        
+                    fetch(url)
+                    .then((resp) => resp.json())
+                    .then(function(data) {
+                        console.log('data', data);
+                        let employee = data.filter(function(value){
+                            return value.rfID == rfID;
+                        });
+                        console.log("employee", employee);
+                        console.log("employeeID", employee[0].id);
+                        fetch(url + "/" + employee[0].id, {
+                            method : "DELETE",
+                            })
+                                .then((resp) => resp.json())
+                                .then(function(data) {
+                                    console.log(data);
+                                    loadData();
+                                    })
+                                .catch(function(error){
+                                    console.log(error);       
+                                    });
+                    })
+                    .catch(function(error){
+                        console.log(error);       
+                    });
+                }
+            </script>
+        </div>
+        <div class="function">
+          <h2>Funktion 3</h2>
+          <p>Väder</p>
+          <p>...</p>
+          <p>...</p>
+          <p>...</p>
+          <p>...</p>
+          <p>...</p>
+        </div>
+        <div class="function">
+          <h2>Funktion 4</h2>
+          <p>....</p>
+          <p>...</p>
+          <p>...</p>
+          <p>...</p>
+          <p>...</p>
+          <p>...</p>
+        </div>
+      </div>
+      <div class="function" style="flex-shrink: 0;">
+        <h2>Funktion 5</h2>
+        <p>Kanske några film rekommendationer</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+      </div>
+    </div>
+  </body>
+</html>
