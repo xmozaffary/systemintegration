@@ -26,7 +26,7 @@
             border: 1px solid black;
             margin: 40px;
             margin-top: 100px;
-            margin-right:150px;
+            margin-right: 150px;
             padding: 10px;
             float: left;
         }
@@ -37,13 +37,13 @@
             margin: 40px;
             padding: 10px;
         }
-
     </style>
 </head>
+
 <body>
     <div>
-        <div id = "poss">
-            <div class = "watch" id="clock"></div>
+        <div id="poss">
+            <div class="watch" id="clock"></div>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
             <script language="javascript">
                 function updateClock() {
@@ -62,7 +62,7 @@
 
             </script>
         </div>
-        
+
 
         <div>
             <h1>Avgånger</h1>
@@ -106,76 +106,76 @@
         </div>
 
 
-        <div class="numberOfEmployees" id = "positionEmployees">
+        <div class="numberOfEmployees" id="positionEmployees">
             <h1> Antal personer</h1>
-            <div id = "numberOfEmployees"></div>
-            <input  type="text" id = "rfID"/>
-            <button onClick = "addPerson()">Check in</button>
+            <div id="numberOfEmployees"></div>
+            <input type="text" id="rfID" />
+            <button onClick="addPerson()">Check in</button>
             <button onClick="removePerson()">Check out</button>
-            <script language = "javascript">
+            <script language="javascript">
                 const url = "https://6422add477e7062b3e1fa5e3.mockapi.io/people"
-                function loadData(){
+                function loadData() {
                     const numberofEmployeesDiv = document.getElementById("numberOfEmployees");
                     const numberOfEmployees = fetch(url)
-                    .then((resp) => resp.json())
-                    .then(function(data){
-                        console.log(data.length)
-                        let NumberOfPeople = data.length;
-                        numberofEmployeesDiv.innerHTML = NumberOfPeople;
-                    })
-                    .catch(function(error){
-                        console.log(error);
-                        
-                    });
+                        .then((resp) => resp.json())
+                        .then(function (data) {
+                            console.log(data.length)
+                            let NumberOfPeople = data.length;
+                            numberofEmployeesDiv.innerHTML = NumberOfPeople;
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+
+                        });
                 }
                 loadData();
-                function addPerson(){
-                    const  rfID = document.getElementById("rfID").value;
-                    console.log("rfID",rfID)
-                    var data = {rfID: rfID};
+                function addPerson() {
+                    const rfID = document.getElementById("rfID").value;
+                    console.log("rfID", rfID)
+                    var data = { rfID: rfID };
                     fetch(url, {
-                        method : "post",
+                        method: "post",
                         body: JSON.stringify(data),
-                })
-                    .then((resp) => resp.json())
-                    .then(function(data) {
-                        console.log(data);
-                        loadData();
-                        alert("Welcome to the office!");
                     })
-                    .catch(function(error){
-                        console.log(error);       
-                    });
-                }
-                
-                function removePerson(){
-                    const  rfID = document.getElementById("rfID").value;
-                    console.log("rfID",rfID)
-        
-                    fetch(url)
-                    .then((resp) => resp.json())
-                    .then(function(data) {
-                        console.log('data', data);
-                        let employee = data.filter(function(value){
-                            return value.rfID == rfID;
+                        .then((resp) => resp.json())
+                        .then(function (data) {
+                            console.log(data);
+                            loadData();
+                            alert("Welcome to the office!");
+                        })
+                        .catch(function (error) {
+                            console.log(error);
                         });
-                        console.log("employee", employee);
-                        console.log("employeeID", employee[0].id);
-                        fetch(url + "/" + employee[0].id, {
-                            method : "DELETE",
+                }
+
+                function removePerson() {
+                    const rfID = document.getElementById("rfID").value;
+                    console.log("rfID", rfID)
+
+                    fetch(url)
+                        .then((resp) => resp.json())
+                        .then(function (data) {
+                            console.log('data', data);
+                            let employee = data.filter(function (value) {
+                                return value.rfID == rfID;
+                            });
+                            console.log("employee", employee);
+                            console.log("employeeID", employee[0].id);
+                            fetch(url + "/" + employee[0].id, {
+                                method: "DELETE",
                             })
                                 .then((resp) => resp.json())
-                                .then(function(data) {
+                                .then(function (data) {
                                     console.log(data);
                                     loadData();
-                                    })
-                                .catch(function(error){
-                                    console.log(error);       
-                                    });
-                    })
-                    .catch(function(error){
-                        console.log(error);       
-                    });
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 }
             </script>
         </div>
@@ -188,40 +188,40 @@
 
 
         <div>
-        <h2>Weather</h2>
-        <div id="weather" class="functions">
-            <script language="javascript">
-                function getWeather() {
-                    // Hämta div-elementet där vädret ska visas
-                    const weatherDiv = document.getElementById("weather");
+            <h2>Weather</h2>
+            <div id="weather" class="functions">
+                <script language="javascript">
+                    function getWeather() {
+                        // Hämta div-elementet där vädret ska visas
+                        const weatherDiv = document.getElementById("weather");
 
-                    // URL till vädertjänstens API, med platsen Stockholm
-                    const url = "http://api.weatherstack.com/current?access_key=c6c926226987daf0bfc67edbc58102a5&query=Stockholm";
+                        // URL till vädertjänstens API, med platsen Stockholm
+                        const url = "http://api.weatherstack.com/current?access_key=c6c926226987daf0bfc67edbc58102a5&query=Stockholm";
 
-                    // Gör ett API-anrop till vädertjänsten
-                    fetch(url)
-                        .then(res => res.json()) // Konvertera svaret till JSON-format
-                        .then(function (data) {
-                            console.log(data); // Visa datan i konsolen för felsökning
+                        // Gör ett API-anrop till vädertjänsten
+                        fetch(url)
+                            .then(res => res.json()) // Konvertera svaret till JSON-format
+                            .then(function (data) {
+                                console.log(data); // Visa datan i konsolen för felsökning
 
-                            // Skapa ett img-element och lägg till URL till rätt väder-ikon
-                            const imgTag = document.createElement("img");
-                            imgTag.src = data.current.weather_icons[0];
-                            imgTag.alt = "Weather icon";
+                                // Skapa ett img-element och lägg till URL till rätt väder-ikon
+                                const imgTag = document.createElement("img");
+                                imgTag.src = data.current.weather_icons[0];
+                                imgTag.alt = "Weather icon";
 
-                            // Skapa ett p-element och lägg till information om temperaturen och vädret
-                            const pTag = document.createElement("p");
-                            pTag.innerHTML = `Temperature: ${data.current.temperature} &#8451;<br> Weather: ${data.current.weather_descriptions}`;
+                                // Skapa ett p-element och lägg till information om temperaturen och vädret
+                                const pTag = document.createElement("p");
+                                pTag.innerHTML = `Temperature: ${data.current.temperature} &#8451;<br> Weather: ${data.current.weather_descriptions}`;
 
-                            // Rensa div-elementet och lägg till bild- och textelementen
-                            weatherDiv.innerHTML = "";
-                            weatherDiv.appendChild(imgTag);
-                            weatherDiv.appendChild(pTag);
-                        })
-                        .catch(function (error) {
-                            console.log(error); // Visa felmeddelande i konsolen om API-anropet misslyckas
-                        });
-                }
+                                // Rensa div-elementet och lägg till bild- och textelementen
+                                weatherDiv.innerHTML = "";
+                                weatherDiv.appendChild(imgTag);
+                                weatherDiv.appendChild(pTag);
+                            })
+                            .catch(function (error) {
+                                console.log(error); // Visa felmeddelande i konsolen om API-anropet misslyckas
+                            });
+                    }
 
                 //function updateWeather() {
                 //    getWeather();
@@ -232,8 +232,47 @@
 
                 //updateWeather();
 
-            </script>
+                </script>
+            </div>
+            <div>
+                <div id="movie-recommendation">
+                    <h2></h2>
+                    <img src="" alt="Movie Poster">
+                    <p></p>
+                </div>
+                <script language="javascript">
+                    function getMovieRecommendation() {
+                        const titles = ["The Matrix", "Inception", "Interstellar", "Blade Runner", "Back to the Future", "Star Wars", "Jurassic Park", "The Terminator", "Alien", "The Shawshank Redemption"];
+                        const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+                        const url = `http://www.omdbapi.com/?t=${randomTitle}&apikey=7cc1e25`;
+
+                        return fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                return {
+                                    title: data.Title,
+                                    year: data.Year,
+                                    poster: data.Poster
+                                };
+                            });
+                    }
+
+                    function showMovieRecommendation() {
+                        getMovieRecommendation().then(movie => {
+                            const movieTitle = document.querySelector('#movie-recommendation h2');
+                            movieTitle.textContent = `${movie.title} (${movie.year})`;
+
+                            const moviePoster = document.querySelector('#movie-recommendation img');
+                            moviePoster.setAttribute('src', movie.poster);
+                        });
+                    }
+
+                    showMovieRecommendation();
+                    setInterval(showMovieRecommendation, 30000);
+                </script>
+
+            </div>
         </div>
-    </div>
 </body>
+
 </html>
