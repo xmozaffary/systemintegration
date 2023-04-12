@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .functions {
+            flex-grow: 1;
+            flex-shrink: 0;
+            border: 1px solid black;
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            overflow: auto;
+        }
+
+        .functions h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h2>Weather</h2>
+        <div id="weather" class="functions">
+            <script language="javascript">
+                function getWeather() {
+                    // Hämta div-elementet där vädret ska visas
+                    const weatherDiv = document.getElementById("weather");
+
+                    // URL till vädertjänstens API, med platsen Stockholm
+                    const url = "http://api.weatherstack.com/current?access_key=c6c926226987daf0bfc67edbc58102a5&query=Stockholm";
+
+                    // Gör ett API-anrop till vädertjänsten
+                    fetch(url)
+                        .then(res => res.json()) // Konvertera svaret till JSON-format
+                        .then(function (data) {
+                            console.log(data); // Visa datan i konsolen för felsökning
+
+                            // Skapa ett img-element och lägg till URL till rätt väder-ikon
+                            const imgTag = document.createElement("img");
+                            imgTag.src = data.current.weather_icons[0];
+                            imgTag.alt = "Weather icon";
+
+                            // Skapa ett p-element och lägg till information om temperaturen och vädret
+                            const pTag = document.createElement("p");
+                            pTag.innerHTML = `Temperature: ${data.current.temperature} &#8451;<br> Weather: ${data.current.weather_descriptions}`;
+
+                            // Rensa div-elementet och lägg till bild- och textelementen
+                            weatherDiv.innerHTML = "";
+                            weatherDiv.appendChild(imgTag);
+                            weatherDiv.appendChild(pTag);
+                        })
+                        .catch(function (error) {
+                            console.log(error); // Visa felmeddelande i konsolen om API-anropet misslyckas
+                        });
+                }
+
+                function updateWeather() {
+                    getWeather();
+
+                    // Uppdatera vädret varje minut
+                    setInterval(getWeather, 60000);
+                }
+
+                updateWeather();
+
+            </script>
+        </div>
+        <div>
+            <div id="clock"></div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+            <script language="javascript">
+                function updateClock() {
+                    // Skapa en variabel med aktuell tid
+                    var now = moment().format('HH:mm:ss');
+
+                    // Uppdatera texten i klockan
+                    document.getElementById('clock').innerHTML = now;
+
+                    // Uppdatera klockan varje sekund
+                    setTimeout(updateClock, 1000);
+                }
+
+                // Starta klockan
+                updateClock();
+
+            </script>
+        </div>
+</body>
+
+</html>

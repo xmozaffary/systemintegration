@@ -1,13 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projekt</title>
+    <style>
+        .functions {
+            flex-grow: 1;
+            flex-shrink: 0;
+            border: 1px solid black;
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            overflow: auto;
+        }
+
+        .functions h2 {
+            margin-top: 0;
+        }
+
+        .watch {
+            font-size: 60px;
+            border: 1px solid black;
+            margin: 40px;
+            margin-top: 100px;
+            margin-right:150px;
+            padding: 10px;
+            float: left;
+        }
+
+        #positionEmployees {
+            float: left;
+            border: 1px solid black;
+            margin: 40px;
+            padding: 10px;
+        }
+
+    </style>
 </head>
 <body>
-    <h1>Hello world!</h1>
-    <h1>andra test</h1>
+    <div>
+        <div id = "poss">
+            <div class = "watch" id="clock"></div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+            <script language="javascript">
+                function updateClock() {
+                    // Skapa en variabel med aktuell tid
+                    var now = moment().format('HH:mm:ss');
+
+                    // Uppdatera texten i klockan
+                    document.getElementById('clock').innerHTML = now;
+
+                    // Uppdatera klockan varje sekund
+                    setTimeout(updateClock, 1000);
+                }
+
+                // Starta klockan
+                updateClock();
+
+            </script>
+        </div>
+        
+
+        <div>
+            <h1>Avgånger</h1>
+            <div id="departures" class="functions"></div>
+            <script language="javascript">
+                function getDeparures() {
+                    const departurediv = document.getElementById("departures");
+                    const url = "https://cors-anywhere.herokuapp.com/https://api.sl.se/api2/realtimedeparturesV4.json?key=d17c80dc5ad947d9a35f4a1618d8d9a6&timewindow=20&siteid=9704";
+                    fetch(url)
+                        .then((resp) => resp.json())
+                        .then(function (data) {
+                            console.log(data);
+                            let departurs = data.ResponseData.Trains.concat(data.ResponseData.Buses); //
+
+                            departurediv.innerHTML = "";
+
+                            return departurs.map(function (departure) {
+                                let divtag = document.createElement("div");
+
+                                divtag.innerHTML = `${departure.LineNumber +
+                                    " " +
+                                    departure.Destination +
+                                    " " +
+                                    departure.DisplayTime
+                                    }`;
+                                departurediv.appendChild(divtag);
+                            });
+                        })
+                        .catch(function (error) { console.log(error) });
+                }
+
+                function UpdateDepartures() {
+                    getDeparures();
+                    // funktionen körs varje 10e sekunde.
+                    setInterval(getDeparures, 1000000000);
+
+                }
+
+                UpdateDepartures();
+            </script>
+        </div>
+
+
+        <div class="numberOfEmployees" id = "positionEmployees">
+            <h1> Antal personer</h1>
+            <div id = "numberOfEmployees"></div>
+            <input  type="text" id = "rfID"/>
+            <button onClick = "addPerson()">Check in</button>
+            <button onClick="removePerson()">Check out</button>
+            <script language = "javascript">
+                const url = "https://6422add477e7062b3e1fa5e3.mockapi.io/people"
+                function loadData(){
+                    const numberofEmployeesDiv = document.getElementById("numberOfEmployees");
+                    const numberOfEmployees = fetch(url)
+                    .then((resp) => resp.json())
+                    .then(function(data){
+                        console.log(data.length)
+                        let NumberOfPeople = data.length;
+                        numberofEmployeesDiv.innerHTML = NumberOfPeople;
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                        
+                    });
+                }
+                loadData();
+                function addPerson(){
+                    const  rfID = document.getElementById("rfID").value;
+                    console.log("rfID",rfID)
+                    var data = {rfID: rfID};
+                    fetch(url, {
+                        method : "post",
+                        body: JSON.stringify(data),
+                })
+                    .then((resp) => resp.json())
+                    .then(function(data) {
+                        console.log(data);
+                        loadData();
+                        alert("Welcome to the office!");
+                    })
+                    .catch(function(error){
+                        console.log(error);       
+                    });
+                }
+                
+                function removePerson(){
+                    const  rfID = document.getElementById("rfID").value;
+                    console.log("rfID",rfID)
+        
+                    fetch(url)
+                    .then((resp) => resp.json())
+                    .then(function(data) {
+                        console.log('data', data);
+                        let employee = data.filter(function(value){
+                            return value.rfID == rfID;
+                        });
+                        console.log("employee", employee);
+                        console.log("employeeID", employee[0].id);
+                        fetch(url + "/" + employee[0].id, {
+                            method : "DELETE",
+                            })
+                                .then((resp) => resp.json())
+                                .then(function(data) {
+                                    console.log(data);
+                                    loadData();
+                                    })
+                                .catch(function(error){
+                                    console.log(error);       
+                                    });
+                    })
+                    .catch(function(error){
+                        console.log(error);       
+                    });
+                }
+            </script>
+        </div>
+
+
+
+
+
+
+
+
+        <div>
+        <h2>Weather</h2>
+        <div id="weather" class="functions">
+            <script language="javascript">
+                function getWeather() {
+                    // Hämta div-elementet där vädret ska visas
+                    const weatherDiv = document.getElementById("weather");
+
+                    // URL till vädertjänstens API, med platsen Stockholm
+                    const url = "http://api.weatherstack.com/current?access_key=c6c926226987daf0bfc67edbc58102a5&query=Stockholm";
+
+                    // Gör ett API-anrop till vädertjänsten
+                    fetch(url)
+                        .then(res => res.json()) // Konvertera svaret till JSON-format
+                        .then(function (data) {
+                            console.log(data); // Visa datan i konsolen för felsökning
+
+                            // Skapa ett img-element och lägg till URL till rätt väder-ikon
+                            const imgTag = document.createElement("img");
+                            imgTag.src = data.current.weather_icons[0];
+                            imgTag.alt = "Weather icon";
+
+                            // Skapa ett p-element och lägg till information om temperaturen och vädret
+                            const pTag = document.createElement("p");
+                            pTag.innerHTML = `Temperature: ${data.current.temperature} &#8451;<br> Weather: ${data.current.weather_descriptions}`;
+
+                            // Rensa div-elementet och lägg till bild- och textelementen
+                            weatherDiv.innerHTML = "";
+                            weatherDiv.appendChild(imgTag);
+                            weatherDiv.appendChild(pTag);
+                        })
+                        .catch(function (error) {
+                            console.log(error); // Visa felmeddelande i konsolen om API-anropet misslyckas
+                        });
+                }
+
+                //function updateWeather() {
+                //    getWeather();
+
+                    // Uppdatera vädret varje minut
+                //    setInterval(getWeather, 60000);
+                //}
+
+                //updateWeather();
+
+            </script>
+        </div>
+    </div>
 </body>
 </html>

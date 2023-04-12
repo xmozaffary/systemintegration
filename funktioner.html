@@ -8,6 +8,8 @@
         flex-shrink: 0;
         border: 1px solid black;
         margin: 10px;
+        height: 250px;
+        width: 300px;
       }
       .function h2 {
         margin-top: 0;
@@ -22,7 +24,7 @@
             <script language = "javascript">
             //Funktionen hämtar realtidsavgångar från SL api
             function getDeparures() {
-                const departyrediv = document.getElementById("departures");
+                const departurediv = document.getElementById("departures");
                 const url = "https://cors-anywhere.herokuapp.com/https://api.sl.se/api2/realtimedeparturesV4.json?key=d17c80dc5ad947d9a35f4a1618d8d9a6&timewindow=20&siteid=9704";
                 fetch(url)
                 .then((resp) => resp.json())
@@ -30,11 +32,9 @@
                     console.log(data); 
                     let departurs = data.ResponseData.Trains.concat(data.ResponseData.Buses); //
                     
-                    departyrediv.innerHTML = "";
+                    departurediv.innerHTML = "";
         
                     return departurs.map(function(departure){
-                        //if(departure.JourneyDirection == 2);
-                        // filtrerar avgångar mot nor
                         let north = departurs.filter(function(value){
                             return value.JourneyDirection == 2;
                         });
@@ -47,7 +47,7 @@
                             " " +
                             departure.DisplayTime
                         }`;
-                        departyrediv.appendChild(divtag);
+                        departurediv.appendChild(divtag);
                     });
                 })
                 .catch(function(error) {console.log(error)});
@@ -61,8 +61,8 @@
             }
         
             UpdateDepartures();
-            </script>
-        </div>
+          </script>
+      </div>
         <div class="numberOfEmployees" class="function">
             <h1> Number of employees in the bulding</h1>
             <div id = "numberOfEmployees"></div>
